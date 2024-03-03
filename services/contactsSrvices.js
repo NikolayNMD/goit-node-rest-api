@@ -6,17 +6,17 @@ const contactsPath = path.resolve("db", "contacts.json");
 const updateContacts = (contacts) =>
   fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
 
-export async function listContacts() {
+async function listContacts() {
   const data = await fs.readFile(contactsPath);
   return JSON.parse(data);
 }
 
-export async function getContactById(contactId) {
+async function getContactById(contactId) {
   const contacts = await listContacts();
   return contacts.find((item) => item.id === contactId) || null;
 }
 
-export async function addContact(data) {
+async function addContact(data) {
   const contacts = await listContacts();
 
   const newContact = {
@@ -30,7 +30,7 @@ export async function addContact(data) {
   return newContact;
 }
 
-export async function updateContactById(contactId, data) {
+async function updateContactById(contactId, data) {
   const contacts = await listContacts();
 
   const index = contacts.findIndex((contact) => contact.id === contactId);
@@ -44,7 +44,7 @@ export async function updateContactById(contactId, data) {
   return contacts[index];
 }
 
-export async function removeContact(contactId) {
+async function removeContact(contactId) {
   const contacts = await listContacts();
 
   const index = contacts.findIndex((contact) => contact.id === contactId);
@@ -57,3 +57,11 @@ export async function removeContact(contactId) {
 
   return isset;
 }
+
+export default {
+  listContacts,
+  getContactById,
+  addContact,
+  updateContactById,
+  removeContact,
+};

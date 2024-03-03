@@ -1,11 +1,23 @@
-import contactsService from "../services/contactsServices.js";
+import contactsService from "../services/contactsSrvices.js";
+import HttpError from "../helpers/HttpError.js";
 
-export const getAllContacts = (req, res) => {};
+const getAllContacts = async (_, res) => {
+  const result = await contactsService.listContacts();
+  res.json(result);
+};
 
-export const getOneContact = (req, res) => {};
+const getOneContact = (req, res) => {};
 
-export const deleteContact = (req, res) => {};
+const deleteContact = (req, res) => {};
 
-export const createContact = (req, res) => {};
+const createContact = (req, res) => {};
 
-export const updateContact = (req, res) => {};
+const updateContact = (req, res) => {};
+
+export default {
+  getAllContacts,
+  getOneContact,
+  deleteContact,
+  createContact,
+  updateContact,
+};
