@@ -4,7 +4,9 @@ import validateBody from "../helpers/validateBody.js";
 import {
   createContactSchema,
   updateContactSchema,
+  updateFavoriteSchema,
 } from "../schemas/contactsSchemas.js";
+import { isValidId } from "../helpers/validateId.js";
 
 const contactsRouter = express.Router();
 
@@ -22,7 +24,15 @@ contactsRouter.post(
 
 contactsRouter.put(
   "/:id",
+  isValidId,
   validateBody(updateContactSchema),
+  contactsController.updateContact
+);
+
+contactsRouter.patch(
+  "/:id/favorite",
+  isValidId,
+  validateBody(updateFavoriteSchema),
   contactsController.updateContact
 );
 
