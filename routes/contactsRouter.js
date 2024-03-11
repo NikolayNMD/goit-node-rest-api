@@ -6,15 +6,15 @@ import {
   updateContactSchema,
   updateFavoriteSchema,
 } from "../schemas/contactsSchemas.js";
-import { isValidId } from "../helpers/validateId.js";
+import isValidId from "../helpers/validateId.js";
 
 const contactsRouter = express.Router();
 
 contactsRouter.get("/", contactsController.getAllContacts);
 
-contactsRouter.get("/:id", contactsController.getOneContact);
+contactsRouter.get("/:id", isValidId, contactsController.getOneContact);
 
-contactsRouter.delete("/:id", contactsController.deleteContact);
+contactsRouter.delete("/:id", isValidId, contactsController.deleteContact);
 
 contactsRouter.post(
   "/",
