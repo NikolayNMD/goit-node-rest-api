@@ -15,20 +15,28 @@ const getAllContacts = async (req, res) => {
 };
 
 const getOneContact = async (req, res) => {
-  const { id } = req.params;
-  const result = await contactsService.getContactById(id);
+  const { id: _id } = req.params;
+  const { _id: owner } = req.user;
+
+  const result = await contactsService.getOneContact({ _id, owner });
+
   if (!result) {
-    throw HttpError(404);
+    throw HttpError(404, `Contact with id:${_id} not found`);
   }
+
   res.json(result);
 };
 
 const deleteContact = async (req, res) => {
-  const { id } = req.params;
-  const result = await contactsService.removeContact(id);
+  const { id: _id } = req.params;
+  const { _id: owner } = req.user;
+
+  const result = await contactsService.removeOneContact({ _id, owner });
+
   if (!result) {
-    throw HttpError(404);
+    throw HttpError(404, `Contact with id:${_id} not found`);
   }
+
   res.json(result);
 };
 
@@ -39,11 +47,18 @@ const createContact = async (req, res) => {
 };
 
 const updateContact = async (req, res) => {
-  const { id } = req.params;
-  const result = await contactsService.updateContactById(id, req.body);
+  const { id: _id } = req.params;
+  const { _id: owner } = req.user;
+
+  const result = await contactsService.updateOneContact(
+    { _id, owner },
+    req.body
+  );
+
   if (!result) {
-    throw HttpError(404);
+    throw HttpError(404, `Contact with id:${_id} not found`);
   }
+
   res.json(result);
 };
 
