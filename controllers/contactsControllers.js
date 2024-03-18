@@ -2,9 +2,16 @@ import contactsService from "../services/contactsSrvices.js";
 import HttpError from "../helpers/HttpError.js";
 import ctrlWrapper from "../helpers/ctrlWrapper.js";
 
-const getAllContacts = async (_, res) => {
-  const result = await contactsService.listContacts();
-  res.json(result);
+const getAllContacts = async (req, res) => {
+  const { _id: owner } = req.user;
+  const { page = 1, limit = 10, favorite } = req.query;
+  const skip = (page - 1) * limit;
+  const result = await contactsService.listContacts({ owner }, { skip, limit });
+
+  const filteredContacts = result.filter(
+    (contact) => contact.favorite === Boolean(favorite)
+  );
+  res.json(filteredContacts);
 };
 
 const getOneContact = async (req, res) => {
@@ -26,7 +33,8 @@ const deleteContact = async (req, res) => {
 };
 
 const createContact = async (req, res) => {
-  const result = await contactsService.addContact(req.body);
+  const { _id: owner } = req.user;
+  const result = await contactsService.addContact({ ...req.body, owner });
   res.status(201).json(result);
 };
 

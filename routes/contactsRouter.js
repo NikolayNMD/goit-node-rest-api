@@ -7,8 +7,11 @@ import {
   updateFavoriteSchema,
 } from "../schemas/contactsSchemas.js";
 import isValidId from "../helpers/validateId.js";
+import { authenticate } from "../helpers/authenticate.js";
 
 const contactsRouter = express.Router();
+
+contactsRouter.use(authenticate);
 
 contactsRouter.get("/", contactsController.getAllContacts);
 
