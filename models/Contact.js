@@ -20,9 +20,13 @@ const contactSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    avatar: {
+      type: String,
+      default: null,
+    },
     owner: {
       type: Schema.Types.ObjectId,
-      ref: 'user',
+      ref: "user",
     },
   },
   { versionKey: false, timestamps: true }

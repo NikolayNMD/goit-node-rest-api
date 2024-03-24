@@ -2,8 +2,12 @@ import jwt from "jsonwebtoken";
 import HttpError from "../helpers/HttpError.js";
 import ctrlWrapper from "../helpers/ctrlWrapper.js";
 import * as authServices from "../services/authServices.js";
+import Jimp from "jimp";
+import fs from "fs/promises";
+import path from "path";
 
 const { JWT_SECRET } = process.env;
+const avatarPath = path.resolve("public", "avatars");
 
 const signUp = async (req, res) => {
   const { email } = req.body;
@@ -64,9 +68,28 @@ const getCurrent = (req, res) => {
   res.json({ email, subscription });
 };
 
+const updateAvatar = async (req, res) => {
+  const { _id } = req.user;
+  const { path: oldPath, filename } = req.file;
+
+  const newPath = path.join(avatarPath, filename);
+  await fs.rename(oldPath, newPath);
+
+  const image = await Jimp.read(newPath);
+  await image.resize(250, 250).quality(80).writeAsync(newPath);
+
+  const avatarURL = path.join("avatars", filename);
+
+  await authServices.updateUser({ _id }, { avatarURL });
+  res.json({
+    avatarURL,
+  });
+};
+
 export default {
   signUp: ctrlWrapper(signUp),
   signIn: ctrlWrapper(signIn),
   signout: ctrlWrapper(signout),
   getCurrent: ctrlWrapper(getCurrent),
+  updateAvatar: ctrlWrapper(updateAvatar),
 };

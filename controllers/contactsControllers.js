@@ -1,6 +1,9 @@
 import contactsService from "../services/contactsSrvices.js";
 import HttpError from "../helpers/HttpError.js";
 import ctrlWrapper from "../helpers/ctrlWrapper.js";
+import Jimp from "jimp";
+import fs from "fs/promises";
+import path from "path";
 
 const getAllContacts = async (req, res) => {
   const { _id: owner } = req.user;
@@ -42,7 +45,22 @@ const deleteContact = async (req, res) => {
 
 const createContact = async (req, res) => {
   const { _id: owner } = req.user;
-  const result = await contactsService.addContact({ ...req.body, owner });
+  const { path: oldPath, filename } = req.file;
+
+  const avatarPath = path.resolve("public", "avatars");
+
+  const newPath = path.join(avatarPath, filename);
+  fs.rename(oldPath, newPath);
+
+  const image = await Jimp.read(newPath);
+  await image.resize(250, 250).quality(80).writeAsync(newPath);
+
+  const avatar = path.join("avatars", filename);
+  const result = await contactsService.addContact({
+    ...req.body,
+    avatar,
+    owner,
+  });
   res.status(201).json(result);
 };
 
